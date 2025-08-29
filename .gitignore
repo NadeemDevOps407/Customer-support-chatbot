@@ -2,3 +2,4 @@ chatbot/
 # Ignore env files
 .env
 *.env
+backend/.env
