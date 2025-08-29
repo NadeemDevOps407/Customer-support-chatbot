@@ -1,0 +1,92 @@
+[33mcommit fd31e5fd686c8b7d70894b37bb934eab5c0fdfbb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: MSHAHID1122 <samd13894@gmail.com>
+Date:   Fri Aug 29 21:17:53 2025 +0500
+
+    corrected apikey .env
+
+[33mcommit 259a6d67e1562499eb0e57914edaf7a432c259a3[m
+Author: MSHAHID1122 <samd13894@gmail.com>
+Date:   Fri Aug 29 21:07:08 2025 +0500
+
+    chatgpt completed
+
+[33mcommit c4761f7c3c783d84b8a93204dae0662814da4e50[m
+Author: MSHAHID1122 <samd13894@gmail.com>
+Date:   Fri Aug 29 21:06:10 2025 +0500
+
+    Remove .env from repository
+
+[33mcommit 9ca658419ebf5bf48c0edd64c80062ec4a99c566[m
+Author: MSHAHID1122 <samd13894@gmail.com>
+Date:   Fri Aug 29 21:04:30 2025 +0500
+
+    funtional chatgpt opani ai
+
+[33mcommit 649345c5b2ab4eea408ded52969c782d6efe5ce9[m[33m ([m[1;31morigin/main[m[33m)[m
+Merge: 13842b1 278ba30
+Author: MSHAHID1122 <samd13894@gmail.com>
+Date:   Fri Aug 29 17:15:00 2025 +0500
+
+    Merge branch 'master'
+    
+    \
+    
+    sdf
+    wf it merges an updated upstream into a topic branch.
+    
+    saasdfsdf`
+
+[33mcommit 13842b1385fb457e11a34471f7b3f131f0427ea0[m
+Merge: 7a55f49 6c215a9
+Author: MSHAHID1122 <samd13894@gmail.com>
+Date:   Fri Aug 29 17:11:28 2025 +0500
+
+    Merge branch 'list'
+
+[33mcommit 278ba30147884c70eef4dbdab9dcf19a3e06fbf5[m[33m ([m[1;31morigin/master[m[33m, [m[1;32mmaster[m[33m)[m
+Author: MSHAHID1122 <samd13894@gmail.com>
+Date:   Fri Aug 29 16:21:27 2025 +0500
+
+    setup folder strcture and files
+
+[33mcommit 6c215a91273d02c0f44f249c16421c3ae2b4ef00[m[33m ([m[1;31morigin/list[m[33m, [m[1;32mlist[m[33m)[m
+Author: unknown <nadeemtaj>
+Date:   Fri Aug 29 16:01:05 2025 +0530
+
+    Project folder structure added
+
+[33mcommit 639eb9aff6ba8c6a43bb524cb3f460ce9aaaa9f8[m
+Author: unknown <nadeemtaj>
+Date:   Fri Aug 29 15:57:19 2025 +0530
+
+    Project folder structure added
+
+[33mcommit 6bce17fbae8a9b7bf3cade351f71db8589d6c329[m
+Author: unknown <nadeemtaj>
+Date:   Fri Aug 29 15:52:37 2025 +0530
+
+    Project folder structure added
+
+[33mcommit 3b84ac9d3c9635233f732142086405e5cd940465[m
+Author: unknown <nadeemtaj>
+Date:   Fri Aug 29 15:51:39 2025 +0530
+
+    Project folder structure added
+
+[33mcommit 0e78c2498046a6baf755f705dc9eed56ed28f6fa[m
+Author: unknown <nadeemtaj>
+Date:   Fri Aug 29 15:46:34 2025 +0530
+
+    Project folder structure added
+
+[33mcommit 666d667128a54222dfad4d2edf4653cb62c0277e[m
+Author: unknown <nadeemtaj>
+Date:   Fri Aug 29 15:07:43 2025 +0530
+
+    new file added for testing
+
+[33mcommit 7a55f493d0afb5b1fa5f2501276be0d14a79cbea[m
+Author: Nadeem Taj <83745409+NadeemDevOps407@users.noreply.github.com>
+Date:   Fri Aug 29 15:00:26 2025 +0530
+
+    Initial commit
