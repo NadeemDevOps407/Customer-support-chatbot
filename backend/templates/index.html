@@ -12,8 +12,12 @@
     <div class="input-container">
       <input id="user-input" type="text" placeholder="Type your message...">
       <button onclick="sendMessage()">Send</button>
-      <input id= "start-button">
-      <input id="stop-button" disabled>
+     <div class="audio-controls">
+      <button id="start-button" class="audio-btn start-btn">Start Recording</button>
+      <button id="stop-button" class="audio-btn stop-btn" disabled>Stop Recording</button>
+    </div>
+    
+    <audio id="recorded-audio" controls style="width: 100%; margin: 10px 0;"></audio>
     </div>
   </div>
   <script src="{{ url_for('static', filename='script.js') }}"></script>

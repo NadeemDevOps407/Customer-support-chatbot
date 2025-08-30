@@ -24,50 +24,98 @@ function addMessage(sender, text, cls) {
   chatBox.appendChild(msg);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
-
 let mediaRecorder;
-let audioChunks = [];
+    let audioChunks = [];
 
-const startBtn = document.getElementById("start-btn");
-const stopBtn = document.getElementById("stop-btn");
-const audioPlayer = document.getElementById("recorded-audio");
+    const startBtn = document.getElementById("start-button");
+    const stopBtn = document.getElementById("stop-button");
+    const audioPlayer = document.getElementById("recorded-audio");
 
-startBtn.onclick = async () => {
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  mediaRecorder = new MediaRecorder(stream);
+    startBtn.onclick = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
 
-  mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-  mediaRecorder.start();
+        mediaRecorder.ondataavailable = e => {
+          if (e.data.size > 0) {
+            audioChunks.push(e.data);
+          }
+        };
+        
+        mediaRecorder.onstop = async () => {
+          const blob = new Blob(audioChunks, { type: 'audio/wav' });
+          audioChunks = [];
 
-  startBtn.disabled = true;
-  stopBtn.disabled = false;
-  console.log("Recording started...");
-};
+          // send audio to backend
+          const formData = new FormData();
+          formData.append("audio", blob, "voice.wav");
 
-stopBtn.onclick = () => {
-  mediaRecorder.onstop = async () => {
-    const blob = new Blob(audioChunks, { type: 'audio/wav' });
-    audioChunks = [];
+          try {
+            const response = await fetch("/voice", {
+              method: "POST",
+              body: formData
+            });
 
-    // play audio locally
-    const url = URL.createObjectURL(blob);
-    audioPlayer.src = url;
+            if (response.ok) {
+              const audioBlob = await response.blob();
+              const audioURL = URL.createObjectURL(audioBlob);
+              audioPlayer.src = audioURL;
+              audioPlayer.play();
+            } else {
+              console.error("Server error:", response.status);
+              alert("Failed to get bot audio response.");
+            }
+          } catch (error) {
+            console.error("Error sending audio:", error);
+            alert("Failed to get bot audio response.");
+          }
+        };
 
-    // send audio to backend
-    const formData = new FormData();
-    formData.append("audio", blob, "voice.wav");
+        mediaRecorder.start();
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        console.log("Recording started...");
+        
+      } catch (error) {
+        console.error("Error accessing microphone:", error);
+        alert("Cannot access microphone. Please check permissions.");
+      }
+    };
 
-    const response = await fetch("/voice", {
-      method: "POST",
-      body: formData
+    stopBtn.onclick = () => {
+      if (mediaRecorder && mediaRecorder.state === "recording") {
+        mediaRecorder.stop();
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+        console.log("Recording stopped...");
+      }
+    };
+
+    // Optional: Add keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === ' ' && !startBtn.disabled) {
+        e.preventDefault();
+        startBtn.click();
+      } else if (e.key === 'Escape' && !stopBtn.disabled) {
+        stopBtn.click();
+      }
     });
 
-    const data = await response.json();
-    console.log("Backend reply:", data.reply);
-    alert("Bot reply: " + data.reply);
-  };
+    // Function to send text message (you might already have this)
+    function sendMessage() {
+      const userInput = document.getElementById("user-input");
+      const message = userInput.value.trim();
+      
+      if (message) {
+        // Add your message sending logic here
+        console.log("Sending message:", message);
+        userInput.value = "";
+      }
+    }
 
-  mediaRecorder.stop();
-  startBtn.disabled = false;
-  stopBtn.disabled = true;
-};
+    // Allow pressing Enter to send message
+    document.getElementById("user-input").addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
