@@ -1,4 +1,4 @@
-body {
+/* body {
   font-family: Arial, sans-serif;
   background: #f4f6f9;
   display: flex;
@@ -28,4 +28,41 @@ body {
 }
 
 .user { color: blue; }
+<<<<<<< HEAD
+.bot { color: green; } */
+/* General Styling */
+
+
+=======
 .bot { color: green; }
+
+ .audio-controls {
+      margin: 10px 0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    
+    .audio-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    
+    .start-btn {
+      background-color: #4CAF50;
+      color: white;
+    }
+    
+    .stop-btn {
+      background-color: #f44336;
+      color: white;
+    }
+    
+    .audio-btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+>>>>>>> 3e234dc (voice feature implemented)
