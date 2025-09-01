@@ -31,12 +31,22 @@ It brings **human-like intelligence** to online shopping experiences using **Cha
 ---
 
 ## 🏗️ Project Architecture  
-
-```mermaid
 flowchart TD
-    A[User] -->|Text/Voice Input| B[Frontend]
-    B --> C[Flask Backend]
-    C --> D[ChatGPT API]
-    D --> C
-    C -->|Response (Text/Audio)| B
-    B --> A
+    A[🎤 User Voice Input] --> B[🌐 Web Frontend]
+    B --> C[🎯 Flask Backend\n/voice endpoint]
+    C --> D[🔊 Whisper API\nSpeech to Text]
+    D --> E[💬 GPT-4o-mini\nAI Response]
+    E --> F[📢 TTS API\nText to Speech]
+    F --> C
+    C --> G[🔊 Audio Response]
+    G --> B
+    B --> H[🎧 Play Audio to User]
+    
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#fff3e0
+    style D fill:#e8f5e8
+    style E fill:#ffebee
+    style F fill:#e0f2f1
+    style G fill:#fce4ec
+    style H fill:#e8eaf6
