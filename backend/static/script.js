@@ -16,7 +16,6 @@
 //   addMessage("Bot", data.reply, "bot");
 // }
 
-<<<<<<< HEAD
 // function addMessage(sender, text, cls) {
 //   const chatBox = document.getElementById("chat-box");
 //   const msg = document.createElement("p");
@@ -108,7 +107,7 @@
 //   }, 800);
 // }
 
-=======
+
 function addMessage(sender, text, cls) {
   const chatBox = document.getElementById("chat-box");
   const msg = document.createElement("p");
@@ -212,4 +211,4 @@ let mediaRecorder;
         sendMessage();
       }
     });
->>>>>>> 3e234dc (voice feature implemented)
+

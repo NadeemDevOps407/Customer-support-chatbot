@@ -209,6 +209,8 @@
       border-radius: 12px;
       max-width: 75%;
       font-size: 14px;
+      display: flex;
+      align-items: center;
     }
 
     .user-message {
@@ -250,6 +252,56 @@
       border-radius: 50%;
       cursor: pointer;
       font-size: 16px;
+    }
+    
+    /* Voice message styling */
+  .voice-message {
+  display: flex;
+  align-items: center;
+}
+
+.voice-message i {
+  margin-right: 8px;
+}
+    
+    .voice-indicator {
+      display: flex;
+      align-items: center;
+      margin-left: 8px;
+    }
+    
+    .voice-dot {
+      width: 6px;
+      height: 6px;
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: 50%;
+      margin: 0 2px;
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+    
+    .voice-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    
+    .voice-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.5); opacity: 1; }
+    }
+    
+    /* Recording animation */
+    .recording .voice-btn {
+      color: #e74c3c !important;
+      animation: pulse-red 1s infinite;
+    }
+    
+    @keyframes pulse-red {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
     }
   </style>
 </head>
@@ -310,71 +362,275 @@
 
   <!-- Chat Widget -->
   <div id="chat-widget">
-    <button id="chat-toggle"><i class="fas fa-headset"></i></button>
-    <div id="chat-box" class="chat-box hidden">
-      <div class="chat-header">
-        <i class="fas fa-robot"></i>
-        <span>Support Chat</span>
-        <button id="close-chat"><i class="fas fa-times"></i></button>
-      </div>
-      <div id="chat-messages" class="chat-messages"></div>
-      <div class="chat-input">
-        <input id="user-input" type="text" placeholder="Type a message...">
-        <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
-      </div>
+  <button id="chat-toggle"><i class="fas fa-headset"></i></button>
+  <div id="chat-box" class="chat-box hidden">
+    <div class="chat-header">
+      <i class="fas fa-robot"></i>
+      <span>Support Chat</span>
+      <button id="close-chat"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="chat-messages" class="chat-messages"></div>
+    <div class="chat-input">
+      <input id="user-input" type="text" placeholder="Type a message...">
+      <button id="voice-btn" title="Voice Message">
+        <i class="fas fa-microphone"></i>
+      </button>
+      <button id="send-btn">
+        <i class="fas fa-paper-plane"></i>
+      </button>
     </div>
   </div>
+</div>
+<script>
+  const DEBUG_MODE = false; // set false in production
 
-  <script>
-    // Toggle chat visibility
-    document.getElementById("chat-toggle").onclick = () => {
-      document.getElementById("chat-box").classList.toggle("hidden");
-    };
 
-    document.getElementById("close-chat").onclick = () => {
-      document.getElementById("chat-box").classList.add("hidden");
-    };
+  const chatToggle = document.getElementById("chat-toggle");
+  const chatBox = document.getElementById("chat-box");
+  const closeChat = document.getElementById("close-chat");
 
-    // Append messages
-    function appendMessage(sender, text) {
-      const chatMessages = document.getElementById("chat-messages");
-      const msg = document.createElement("div");
-      msg.classList.add("message", sender === "user" ? "user-message" : "bot-message");
-      msg.textContent = text;
-      chatMessages.appendChild(msg);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-// Send message
-async function sendMessage() {
-  const input = document.getElementById("user-input");
-  const text = input.value.trim();
-  if (!text) return;
-
-  // Show user message in chat
-  appendMessage("user", text);
-  input.value = "";
-
-  try {
-    // Send message to backend
-    console.log("Sending message to backend:", text);
-    const response = await fetch("/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text })
-    });
-
-    const data = await response.json();
-
-    // Show bot reply
-    appendMessage("bot", data.reply);
-  } catch (error) {
-    console.error("Error:", error);
-    appendMessage("bot", "⚠️ Sorry, something went wrong. Please try again.");
+  if (chatToggle) {
+    chatToggle.onclick = () => chatBox.classList.toggle("hidden");
   }
-}
+  if (closeChat) {
+    closeChat.onclick = () => chatBox.classList.add("hidden");
+  }
 
-  </script>
+  // ==========================
+  // MESSAGE HANDLING
+  // ==========================
+  function appendMessage(sender, text, isVoice = false, isDebug = false) {
+    const chatMessages = document.getElementById("chat-messages");
+    if (!chatMessages) return;
+
+    const msg = document.createElement("div");
+
+    if (isDebug) {
+      msg.classList.add("message", "debug-message");
+      msg.innerHTML = `<small>DEBUG: ${text}</small>`;
+    } else {
+      msg.classList.add("message", sender === "user" ? "user-message" : "bot-message");
+
+      if (isVoice) {
+        msg.innerHTML = `
+          <div class="voice-message">
+            <i class="fas ${sender === "user" ? "fa-microphone" : "fa-robot"}"></i>
+            ${text}
+            ${
+              sender === "user"
+                ? '<div class="voice-indicator"><div class="voice-dot"></div><div class="voice-dot"></div><div class="voice-dot"></div></div>'
+                : ""
+            }
+          </div>
+        `;
+      } else {
+        msg.textContent = text;
+      }
+    }
+
+    chatMessages.appendChild(msg);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+
+
+  // ==========================
+  // TEXT MESSAGE
+  // ==========================
+  async function sendMessage() {
+    const input = document.getElementById("user-input");
+    if (!input) return;
+
+    const text = input.value.trim();
+    if (!text) return;
+
+    appendMessage("user", text);
+    input.value = "";
+
+    try {
+    
+
+      const response = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text }),
+      });
+
+      
+
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const data = await response.json();
+        appendMessage("bot", data.reply || "⚠️ Empty bot reply");
+      } else {
+        const textResponse = await response.text();
+        appendMessage("bot", "⚠️ Unexpected server response format.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      appendMessage("bot", "⚠️ Something went wrong. Try again.");
+    }
+  }
+
+  // ==========================
+  // VOICE RECORDING
+  // ==========================
+  let mediaRecorder;
+  let audioChunks = [];
+  let isRecording = false;
+
+  const voiceBtn = document.getElementById("voice-btn");
+  const sendBtn = document.getElementById("send-btn");
+  const userInput = document.getElementById("user-input");
+
+  if (voiceBtn) {
+    voiceBtn.onclick = () => {
+      if (!isRecording) startRecording();
+      else stopRecording();
+    };
+  }
+
+  if (sendBtn) {
+    sendBtn.onclick = () => sendMessage();
+  }
+
+  if (userInput) {
+    userInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
+  }
+
+  async function startRecording() {
+    try {
+      
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      
+
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+         
+          audioChunks.push(e.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => processRecording();
+
+      mediaRecorder.start();
+      isRecording = true;
+
+      voiceBtn.classList.add("recording");
+      voiceBtn.innerHTML = '<i class="fas fa-stop"></i>';
+      voiceBtn.title = "Stop Recording";
+      
+    } catch (error) {
+      console.error("Mic error:", error);
+      
+      appendMessage("bot", "⚠️ Cannot access microphone. Check permissions.");
+    }
+  }
+
+async function processRecording() {
+    const blob = new Blob(audioChunks, { type: "audio/wav" });
+    audioChunks = [];
+
+    appendMessage("user", "Voice message", true);
+
+    const formData = new FormData();
+    formData.append("audio", blob, "voice.wav");
+
+    try {
+      const response = await fetch("/voice", { method: "POST", body: formData });
+
+
+      const contentType = response.headers.get("content-type");
+
+      if (response.ok) {
+        if (contentType && contentType.includes("audio")) {
+          const audioBlob = await response.blob();
+          const audioURL = URL.createObjectURL(audioBlob);
+          const audio = new Audio(audioURL);
+
+          audio.play();
+          appendMessage("bot", "🎵 Audio: CustomGpt");
+        } else {
+          // Handle unexpected successful response
+          const textResponse = await response.text();
+          appendMessage("bot", "⚠️ Unexpected server response format.");
+        }
+      } else {
+        // Handle error responses
+        if (contentType && contentType.includes("application/json")) {
+          const errorData = await response.json();
+          appendMessage("bot", `⚠️ Error: ${errorData.error || "Voice processing failed"}`);
+        } else {
+          const errorText = await response.text();
+          appendMessage("bot", "⚠️ Voice processing failed.");
+        }
+      }
+    } catch (error) {
+      console.error("Audio error:", error);
+      appendMessage("bot", "⚠️ Failed to process voice message.");
+    }
+  }
+
+  function stopRecording() {
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+      mediaRecorder.stop();
+
+      mediaRecorder.stream.getTracks().forEach((track) => {
+        track.stop();
+      });
+
+      isRecording = false;
+      voiceBtn.classList.remove("recording");
+      voiceBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+      voiceBtn.title = "Voice Message";
+    }
+  }
+
+  // ==========================
+  // KEYBOARD SHORTCUTS
+  // ==========================
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "v" && !isRecording && !e.repeat) {
+      if (!userInput.matches(":focus")) {
+        e.preventDefault();
+        startRecording();
+      }
+    }
+  });
+
+  document.addEventListener("keyup", (e) => {
+    if (e.key === "v" && isRecording) {
+      e.preventDefault();
+      stopRecording();
+    }
+  });
+
+  // ==========================
+  // DEBUG MODE STARTUP
+  // ==========================
+  if (DEBUG_MODE) {
+    setTimeout(() => {
+      appendMessage("debug", "Debug mode enabled. Logs shown here.", false, true);
+      appendMessage("debug", "Check console for details.", false, true);
+    }, 1000);
+  }
+</script>
+  <style>
+    /* Add debug message styling */
+    .debug-message {
+      background-color: #f0f0f0 !important;
+      color: #666 !important;
+      font-size: 11px !important;
+      font-family: monospace;
+      border-left: 3px solid #999;
+      margin: 4px 8px;
+      max-width: 90% !important;
+    }
+  </style>
 </body>
 </html>
-
-

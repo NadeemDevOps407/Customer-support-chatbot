@@ -11,14 +11,12 @@ def home():
     return render_template("index.html")
 @app.route("/voice", methods=["POST"])
 def voice():
-    print("Voice endpoint called")
+    
     
     if "audio" not in request.files:
-        print("No audio file found in request")
         return jsonify({"error": "no audio provided"}), 400
     
     audio_file = request.files["audio"]
-    print(f"Audio file received: {audio_file.filename}, size: {audio_file.content_length}")
     
     temp_path = None  # Initialize variable
     
@@ -30,14 +28,11 @@ def voice():
         with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_file:
             audio_file.save(temp_file.name)
             temp_path = temp_file.name
-            print(f"Saved temporary file: {temp_path}")
             
             # Check file size
             file_size = os.path.getsize(temp_path)
-            print(f"Temporary file size: {file_size} bytes")
             
             if file_size == 0:
-                print("ERROR: Uploaded file is empty!")
                 return jsonify({"error": "uploaded audio file is empty"}), 400
         
         # Pass the file path to your function
@@ -49,15 +44,12 @@ def voice():
         # Now delete the temporary file
         if temp_path and os.path.exists(temp_path):
             os.unlink(temp_path)
-            print("Temporary file deleted successfully")
         
         if response_audio is None:
-            print("ERROR: ask_openai_voice returned None")
             return jsonify({"error": "failed to generate audio response"}), 500
             
         response_audio.seek(0)
         
-        print("Sending audio response back to client")
         return send_file(
             response_audio,
             mimetype="audio/mpeg",
@@ -66,7 +58,6 @@ def voice():
         )
     
     except Exception as e:
-        print(f"ERROR in voice route: {str(e)}")
         import traceback
         traceback.print_exc()
         
@@ -74,9 +65,8 @@ def voice():
         if temp_path and os.path.exists(temp_path):
             try:
                 os.unlink(temp_path)
-                print("Temporary file deleted successfully")
             except PermissionError:
-                print("Temp file still in use, scheduling later cleanup")
+                pass  # Ignore if file is already deleted or locked
         
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
@@ -89,8 +79,10 @@ def chat():
         if not user_message:
             return jsonify({"error": "No message provided"}), 400
 
-    response = openai.ask_openai(user_message)
-    return jsonify({"reply": response})
+        response = openai.ask_openai_chat(user_message)
+        return jsonify({"reply": response})
+    except Exception as e:
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)

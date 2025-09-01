@@ -105,24 +105,24 @@ def ask_openai(history):
 def ask_openai_voice(input_voice) -> str:
     try:
         text = get_voice_text(input_voice)
-
-        # add user input to chat history
+       
+        
         chat_history.append({"role": "user", "content": text})
-
-        # get assistant response with full history
         response_text = ask_openai(chat_history)
-
-        # add assistant response to chat history
+       
+        
         chat_history.append({"role": "assistant", "content": response_text})
-
-        # convert response to audio
         response_audio = text_to_audio(response_text)
+        
+        if response_audio is None:
+            raise Exception("Failed to generate audio")
+            
         return response_audio 
         
     except Exception as e:
-        return f"Error: {str(e)}"
-
-def ask_openai(prompt: str) -> str:
+       
+        raise  # Re-raise the exception
+def ask_openai_chat(prompt: str) -> str:
     try:
         response = client.chat.completions.create(
             model="gpt-4o-mini",  
