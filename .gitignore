@@ -3,6 +3,6 @@ chatbot/
 # Ignore env files
 .env
 *.env
-backend/.env
-backend/.env
+project/.env
+project/.env
 venv/
